@@ -18,7 +18,7 @@ const navLinks = [
   { label: "Cart", href: "/cart" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ hidden }) => {
   const [user, setUser] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -51,6 +51,10 @@ const Navbar = () => {
         height: 140,
         display: "flex",
         justifyContent: "center",
+        transition: 'transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s',
+        transform: hidden ? 'translateY(-100%)' : 'translateY(0)',
+        opacity: hidden ? 0 : 1,
+        pointerEvents: hidden ? 'none' : 'auto',
       }}
     >
       <Toolbar sx={{ width: "100%", maxWidth: 1400, mx: "auto", minHeight: "0 !important", px: 0 }}>
