@@ -13,6 +13,7 @@ import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Footer from "../components/Footer";
+import ProductCard from "../components/ProductCard";
 
 const images = [
   "/images/maksim-larin-NOpsC3nWTzY-unsplash.jpg",
@@ -143,99 +144,8 @@ const Home = () => {
         </Typography>
         <Grid container spacing={4} alignItems="stretch">
           {products.map((product) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex" }}>
-              <Paper
-                className="animated-card"
-                elevation={4}
-                sx={{
-                  borderRadius: 4,
-                  background: "#fff",
-                  boxShadow: "0 4px 24px rgba(31,38,135,0.10)",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: 440,
-                  minWidth: 260,
-                  maxWidth: 320,
-                  width: "100%",
-                  overflow: "hidden",
-                  p: 0,
-                  transition: 'box-shadow 0.3s, transform 0.3s',
-                }}
-              >
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: 170,
-                    background: '#f7f8fa',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderTopLeftRadius: 4,
-                    borderTopRightRadius: 4,
-                    overflow: 'hidden'
-                  }}
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </Box>
-                <Box sx={{ flexGrow: 1, px: 2, pt: 2, pb: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                  <Typography variant="h6" className="funky-product-name" sx={{ fontWeight: 700, color: "#222", mb: 0.5 }}>{product.name}</Typography>
-                  <Typography variant="body2" sx={{ color: "#444", mb: 0.5 }}>{product.category}</Typography>
-                  <Typography variant="body2" sx={{ color: "#666", mb: 1 }}>
-                    Sizes: {product.sizes && product.sizes.join(", ")}
-                  </Typography>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#111", mb: 1 }}>₹{product.price}</Typography>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.2, width: "100%", alignItems: "center", pb: 2, mt: "auto" }}>
-                  <Button
-                    size="medium"
-                    variant="contained"
-                    sx={{
-                      background: "#e53935",
-                      color: "#fff",
-                      borderRadius: 999,
-                      fontWeight: 700,
-                      fontSize: "0.95rem",
-                      boxShadow: "0 2px 8px 0 rgba(229,57,53,0.10)",
-                      textTransform: "none",
-                      width: "100%",
-                      maxWidth: 160,
-                      minHeight: 36,
-                      py: 0.5,
-                      mx: "auto",
-                      '&:hover': { background: '#b71c1c' }
-                    }}
-                    href={"/product/" + product.id}
-                  >
-                    Buy
-                  </Button>
-                  <Button
-                    size="medium"
-                    variant="contained"
-                    sx={{
-                      background: "#222",
-                      color: "#fff",
-                      borderRadius: 999,
-                      fontWeight: 700,
-                      fontSize: "0.95rem",
-                      boxShadow: "0 2px 8px 0 rgba(34,34,34,0.10)",
-                      textTransform: "none",
-                      width: "100%",
-                      maxWidth: 160,
-                      minHeight: 36,
-                      py: 0.5,
-                      mx: "auto",
-                      '&:hover': { background: '#000' }
-                    }}
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    Add to Cart
-                  </Button>
-                </Box>
-              </Paper>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
+              <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
             </Grid>
           ))}
         </Grid>

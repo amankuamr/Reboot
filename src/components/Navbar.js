@@ -4,6 +4,9 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
 import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +20,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,7 +77,37 @@ const Navbar = () => {
           ))}
         </Box>
         {/* Auth Button */}
-        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 2, minWidth: 180 }}>
+          <Box sx={{ display: "flex", alignItems: "center", minWidth: 40, mr: 2 }}>
+            <IconButton
+              onClick={() => setSearchOpen((open) => !open)}
+              sx={{
+                color: "#e53935",
+                transition: "background 0.2s",
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              placeholder="Search..."
+              value={searchValue}
+              onChange={e => setSearchValue(e.target.value)}
+              sx={{
+                width: searchOpen ? 180 : 0,
+                opacity: searchOpen ? 1 : 0,
+                transition: "width 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s",
+                ml: 1,
+                px: searchOpen ? 1 : 0,
+                background: "#f3f6fa",
+                borderRadius: 2,
+                fontSize: "1rem",
+                boxShadow: searchOpen ? "0 2px 8px 0 rgba(45,108,223,0.10)" : "none",
+                pointerEvents: searchOpen ? "auto" : "none",
+                overflow: "hidden"
+              }}
+              inputProps={{ style: { padding: 4 } }}
+            />
+          </Box>
           {user ? (
             <Button
               onClick={handleLogout}
