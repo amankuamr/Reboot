@@ -77,7 +77,20 @@ const Cart = () => {
               <Box key={idx} sx={{ display: "flex", alignItems: "center", mb: 3, p: 2, borderRadius: 4, background: "#f7f8fa", boxShadow: "0 2px 8px 0 rgba(31,38,135,0.06)" }}>
                 <img src={item.image} alt={item.name} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8, marginRight: 16 }} />
                 <Box sx={{ flexGrow: 1 }}>
-                  <Typography sx={{ fontWeight: 700, color: "#222" }}>{item.name}</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontWeight: 700, color: "#222" }}>{item.name}</Typography>
+                    {item.color && (
+                      <span style={{
+                        display: 'inline-block',
+                        width: 18,
+                        height: 18,
+                        borderRadius: '50%',
+                        background: item.color.toLowerCase(),
+                        border: '2px solid #eee',
+                        marginLeft: 6
+                      }} />
+                    )}
+                  </Box>
                   <Typography sx={{ color: "#444" }}>Size: {item.size}</Typography>
                   <Typography sx={{ color: "#444" }}>₹{item.price}</Typography>
                 </Box>

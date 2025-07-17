@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CheckIcon from '@mui/icons-material/Check';
 
 const COLOR_OPTIONS = ["#111", "#e53935", "#2d6cdf", "#43a047", "#fbc02d"];
 
@@ -150,24 +151,54 @@ const ProductDetail = () => {
             </Box>
             <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{product.name}</Typography>
             <Typography variant="h5" sx={{ color: "#e53935", fontWeight: 700, mb: 2 }}>₹{product.price}</Typography>
-            {/* Color Selector */}
+            {/* Color Selector for Consumer */}
             <Typography variant="subtitle1" sx={{ mb: 1 }}>Color:</Typography>
-            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-              {COLOR_OPTIONS.map((color) => (
-                <Box
-                  key={color}
-                  onClick={() => setSelectedColor(color)}
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "50%",
-                    background: color,
-                    border: selectedColor === color ? "3px solid #e53935" : "2px solid #eee",
-                    cursor: "pointer",
-                    transition: "border 0.2s"
-                  }}
-                />
-              ))}
+            <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: 'center' }}>
+              {Array.isArray(product.color) && product.color.length > 0 ? (
+                product.color.map((color, idx) => (
+                  <Box
+                    key={color + idx}
+                    onClick={() => setSelectedColor(color)}
+                    sx={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer',
+                      border: selectedColor === color ? '2px solid #e53935' : '2px solid #eee',
+                      borderRadius: '50%',
+                      p: 0.5,
+                      background: selectedColor === color ? 'rgba(229,57,53,0.08)' : 'transparent',
+                      transition: 'border 0.2s, background 0.2s',
+                      position: 'relative',
+                      width: 32, height: 32
+                    }}
+                  >
+                    <span style={{
+                      display: 'inline-block',
+                      width: 22,
+                      height: 22,
+                      borderRadius: '50%',
+                      background: color.toLowerCase(),
+                      border: '2px solid #eee',
+                      position: 'relative',
+                    }} />
+                    {selectedColor === color && (
+                      <CheckIcon sx={{
+                        color: '#fff',
+                        fontSize: 18,
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 2,
+                        background: color.toLowerCase(),
+                        borderRadius: '50%',
+                        p: 0.2
+                      }} />
+                    )}
+                  </Box>
+                ))
+              ) : (
+                <Typography sx={{ fontSize: 14, color: '#888' }}>No color specified</Typography>
+              )}
             </Box>
             {/* Size Selector */}
             <Typography variant="subtitle1" sx={{ mb: 1 }}>Size:</Typography>
@@ -212,6 +243,36 @@ const ProductDetail = () => {
                   fontSize: "1.1rem",
                   '&:hover': { background: '#b71c1c' },
                 }}
+                disabled={!selectedColor || !selectedSize}
+                onClick={async () => {
+                  if (!user) {
+                    alert("Please log in to add products to your cart.");
+                    window.location.href = "/login";
+                    return;
+                  }
+                  const cartItem = {
+                    productId: product.id,
+                    name: product.name,
+                    image: product.image,
+                    price: product.price,
+                    color: selectedColor,
+                    size: selectedSize,
+                    quantity: 1,
+                  };
+                  // Save to user's cart in Firestore
+                  const userDoc = await getDoc(doc(db, "users", user.uid));
+                  let cart = userDoc.data()?.cart || [];
+                  const idx = cart.findIndex(
+                    (item) => item.productId === cartItem.productId && item.size === cartItem.size && item.color === cartItem.color
+                  );
+                  if (idx > -1) {
+                    cart[idx].quantity += 1;
+                  } else {
+                    cart.push(cartItem);
+                  }
+                  await setDoc(doc(db, "users", user.uid), { cart }, { merge: true });
+                  alert("Added to cart!");
+                }}
               >
                 Add to Cart
               </Button>
@@ -228,6 +289,7 @@ const ProductDetail = () => {
                   fontSize: "1.1rem",
                   '&:hover': { background: '#e53935' },
                 }}
+                disabled={!selectedColor || !selectedSize}
               >
                 Buy Now
               </Button>

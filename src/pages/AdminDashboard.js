@@ -9,10 +9,13 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { updateDoc } from "firebase/firestore";
 import Rating from "@mui/material/Rating";
 import Navbar from "../components/Navbar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import MenuItem from "@mui/material/MenuItem";
 
 const CLOUDINARY_UPLOAD_URL = "https://api.cloudinary.com/v1_1/dgyqgv15p/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "Reeboot";
@@ -25,6 +28,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [allReviews, setAllReviews] = useState([]);
+  const [editId, setEditId] = useState(null); // Track which product is being edited
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, setUser);
@@ -82,22 +86,38 @@ const AdminDashboard = () => {
         setImageUrl(imgUrl);
       }
       const sizesArr = form.sizes.split(",").map(s => parseInt(s.trim(), 10)).filter(Boolean);
-      await addDoc(collection(db, "products"), {
-        name: form.name,
-        price: Number(form.price),
-        category: form.category,
-        sizes: sizesArr,
-        image: imgUrl,
-        createdAt: new Date(),
-        stock: 10,
-        description: "",
-        gender: "Unisex"
-      });
+      if (editId) {
+        // Update existing product
+        await updateDoc(doc(db, "products", editId), {
+          name: form.name,
+          price: Number(form.price),
+          category: form.type || '',
+          color: form.color || [],
+          sizes: sizesArr,
+          image: imgUrl,
+          gender: form.gender || ''
+        });
+      } else {
+        // Add new product
+        await addDoc(collection(db, "products"), {
+          name: form.name,
+          price: Number(form.price),
+          category: form.type || '',
+          color: form.color || [],
+          sizes: sizesArr,
+          image: imgUrl,
+          createdAt: new Date(),
+          stock: 10,
+          description: "",
+          gender: form.gender || ''
+        });
+      }
       setForm({ name: "", price: "", category: "", sizes: "", image: null });
       setImageUrl("");
+      setEditId(null);
       fetchProducts();
     } catch (err) {
-      setError("Failed to add product. " + err.message);
+      setError("Failed to add/update product. " + err.message);
     } finally {
       setLoading(false);
     }
@@ -131,11 +151,65 @@ const AdminDashboard = () => {
               <div id="product-section"></div>
               <Typography variant="h6" sx={{ mb: 2, color: "#2d6cdf" }}>Add New Product</Typography>
               <form onSubmit={handleAddProduct} style={{ marginBottom: 32 }}>
-                <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2 }}>
-                  <TextField label="Name" name="name" value={form.name} onChange={handleInputChange} required sx={{ flex: 1 }} />
-                  <TextField label="Price" name="price" value={form.price} onChange={handleInputChange} required type="number" sx={{ flex: 1 }} />
-                  <TextField label="Category" name="category" value={form.category} onChange={handleInputChange} required sx={{ flex: 1 }} />
-                  <TextField label="Sizes (comma separated)" name="sizes" value={form.sizes} onChange={handleInputChange} required sx={{ flex: 1 }} />
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  <TextField label="Name" name="name" value={form.name} onChange={handleInputChange} required sx={{ flex: 1, minWidth: 180 }} />
+                  <TextField label="Price" name="price" value={form.price} onChange={handleInputChange} required type="number" sx={{ flex: 1, minWidth: 120 }} />
+                  <TextField
+                    select
+                    label="Color"
+                    name="color"
+                    value={form.color || []}
+                    onChange={e => setForm(prev => ({ ...prev, color: typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value }))}
+                    required
+                    SelectProps={{ multiple: true }}
+                    sx={{ flex: 1, minWidth: 120 }}
+                  >
+                    <MenuItem value="Black">Black</MenuItem>
+                    <MenuItem value="White">White</MenuItem>
+                    <MenuItem value="Red">Red</MenuItem>
+                    <MenuItem value="Blue">Blue</MenuItem>
+                    <MenuItem value="Green">Green</MenuItem>
+                    <MenuItem value="Yellow">Yellow</MenuItem>
+                    <MenuItem value="Orange">Orange</MenuItem>
+                    <MenuItem value="Pink">Pink</MenuItem>
+                    <MenuItem value="Brown">Brown</MenuItem>
+                    <MenuItem value="Grey">Grey</MenuItem>
+                    <MenuItem value="Purple">Purple</MenuItem>
+                  </TextField>
+                  <TextField label="Sizes (comma separated)" name="sizes" value={form.sizes} onChange={handleInputChange} required sx={{ flex: 1, minWidth: 180 }} />
+                  {/* Product Type Dropdown */}
+                  <TextField
+                    select
+                    label="Type"
+                    name="type"
+                    value={form.type || ''}
+                    onChange={handleInputChange}
+                    required
+                    SelectProps={{ native: true }}
+                    sx={{ flex: 1, minWidth: 140 }}
+                  >
+                    <option value="">Select Type</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Running">Running</option>
+                    <option value="Outdoor">Outdoor</option>
+                  </TextField>
+                  {/* Gender Dropdown */}
+                  <TextField
+                    select
+                    label="Gender"
+                    name="gender"
+                    value={form.gender || ''}
+                    onChange={handleInputChange}
+                    required
+                    SelectProps={{ native: true }}
+                    sx={{ flex: 1, minWidth: 140 }}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Men">Men</option>
+                    <option value="Women">Women</option>
+                    <option value="Kids">Kids</option>
+                  </TextField>
                 </Box>
                 <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
                   <Button variant="contained" component="label" sx={{ borderRadius: 999, background: "#2d6cdf" }}>
@@ -146,7 +220,7 @@ const AdminDashboard = () => {
                 </Box>
                 {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
                 <Button type="submit" variant="contained" sx={{ mt: 3, borderRadius: 999, fontWeight: 700, background: "#e53935", px: 4, py: 1, fontSize: "1.1rem" }} disabled={loading}>
-                  {loading ? "Adding..." : "Add Product"}
+                  {loading ? (editId ? "Updating..." : "Adding...") : (editId ? "Update Product" : "Add Product")}
                 </Button>
               </form>
               <Typography variant="h6" sx={{ mb: 2, color: "#2d6cdf" }}>Product List</Typography>
@@ -158,8 +232,23 @@ const AdminDashboard = () => {
                     <img src={prod.image} alt={prod.name} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginRight: 16 }} />
                     <Box sx={{ flexGrow: 1 }}>
                       <Typography sx={{ fontWeight: 700, color: "#222" }}>{prod.name}</Typography>
-                      <Typography sx={{ color: "#444" }}>₹{prod.price} | {prod.category} | Sizes: {prod.sizes && prod.sizes.join(", ")}</Typography>
+                      <Typography sx={{ color: "#444" }}>₹{prod.price} | {prod.category} | {prod.gender} | {Array.isArray(prod.color) ? prod.color.map((c, i) => <span key={c} style={{color: c, fontWeight: 700, marginRight: 4}}>●</span>) : <span style={{color: prod.color, fontWeight: 700}}>●</span>} {Array.isArray(prod.color) ? prod.color.join(", ") : prod.color} | Sizes: {prod.sizes && prod.sizes.join(", ")}</Typography>
                     </Box>
+                    <IconButton onClick={() => {
+                      setEditId(prod.id);
+                      setForm({
+                        name: prod.name || "",
+                        price: prod.price || "",
+                        type: prod.category || "",
+                        color: prod.color || [],
+                        sizes: prod.sizes ? prod.sizes.join(",") : "",
+                        gender: prod.gender || "",
+                        image: null
+                      });
+                      setImageUrl(prod.image || "");
+                    }} color="primary">
+                      <EditIcon />
+                    </IconButton>
                     <IconButton onClick={() => handleDelete(prod.id)} color="error">
                       <DeleteIcon />
                     </IconButton>

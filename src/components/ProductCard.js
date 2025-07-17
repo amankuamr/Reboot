@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -6,6 +8,31 @@ import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
+
+  // DEBUG: Log the product object to inspect its structure
+  console.log('ProductCard product:', product);
+
+  // Fetch reviews and calculate average rating as in ProductDetail
+  const [avgRating, setAvgRating] = useState('N/A');
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const reviewsSnap = await getDocs(collection(db, "products", product.id, "reviews"));
+        const reviews = reviewsSnap.docs.map(doc => doc.data());
+        if (reviews.length > 0) {
+          const sum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+          setAvgRating((sum / reviews.length).toFixed(1));
+        } else {
+          setAvgRating('N/A');
+        }
+      } catch (e) {
+        setAvgRating('N/A');
+      }
+    };
+    if (product.id) fetchReviews();
+  }, [product.id]);
+
   const handleCardClick = (e) => {
     // Prevent navigation if Add to cart button is clicked
     if (e.target.closest('.add-to-cart-btn')) return;
@@ -37,6 +64,26 @@ const ProductCard = ({ product, onAddToCart }) => {
         }
       }}
     >
+      {/* Gender Tag */}
+      {product.gender && (
+        <Box sx={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          background: product.gender === 'Men' ? '#2d6cdf' : product.gender === 'Women' ? '#e53935' : '#43a047',
+          color: '#fff',
+          fontWeight: 700,
+          fontSize: 12,
+          px: 1.5,
+          py: 0.5,
+          borderRadius: 8,
+          zIndex: 10,
+          textTransform: 'uppercase',
+          letterSpacing: 1
+        }}>
+          {product.gender}
+        </Box>
+      )}
       {/* Image */}
       <Box
         sx={{
@@ -59,14 +106,61 @@ const ProductCard = ({ product, onAddToCart }) => {
           style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.35s cubic-bezier(0.23, 1, 0.32, 1)" }}
         />
       </Box>
-      {/* Title */}
-      <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: "#222", textTransform: "capitalize", textOverflow: "ellipsis", overflow: "clip", whiteSpace: "nowrap", mt: 1 }}>
-        {product.name}
-      </Typography>
+      {/* Name and Type Tag Row */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: "#222", textTransform: "capitalize", textOverflow: "ellipsis", overflow: "clip", whiteSpace: "nowrap", m: 0 }}>
+          {product.name}
+        </Typography>
+        {product.category && (
+          <Box sx={{
+            background: '#f3f6fa',
+            color: '#2d6cdf',
+            fontWeight: 700,
+            fontSize: 11,
+            px: 1.2,
+            py: 0.3,
+            borderRadius: 6,
+            textTransform: 'capitalize',
+            letterSpacing: 1,
+            ml: 2,
+            minWidth: 60,
+            textAlign: 'right',
+            m: 0
+          }}>{product.category}</Box>
+        )}
+      </Box>
+      {/* Colors and Rating Row (side by side) */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, mb: 0.5, justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {Array.isArray(product.color) && product.color.length > 0 && (
+            product.color.map((color, idx) => (
+              <span
+                key={idx}
+                title={color}
+                style={{
+                  display: 'inline-block',
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  background: color,
+                  border: '1px solid #ccc',
+                  marginRight: 4
+                }}
+              />
+            ))
+          )}
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <span style={{ color: '#fbc02d', fontSize: 16 }}>★</span>
+          <Typography sx={{ fontSize: 13, color: '#222', fontWeight: 600, m: 0 }}>
+            {avgRating}
+          </Typography>
+        </Box>
+      </Box>
       {/* Size */}
-      <Box sx={{ fontSize: "0.85rem", color: "#222", mt: 0.5 }}>
+      <Box sx={{ fontSize: "0.85rem", color: "#222", m: 0 }}>
         <span>Size</span>
-        <ul style={{ display: "flex", alignItems: "center", gap: 4, margin: 0, marginTop: 4, padding: 0 }}>
+        <ul style={{ display: "flex", alignItems: "center", gap: 4, margin: 0, marginTop: 0, padding: 0 }}>
           {product.sizes && product.sizes.map((size) => (
             <li key={size} style={{ listStyle: "none" }}>
               <button

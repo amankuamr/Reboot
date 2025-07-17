@@ -215,6 +215,7 @@ const Home = () => {
                 color: '#fff',
               },
             }}
+            onClick={() => window.location.href = '/featured'}
           >
             View More
           </Button>
