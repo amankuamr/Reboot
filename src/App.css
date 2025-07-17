@@ -1,0 +1,115 @@
+/* Modern UI Styles */
+body {
+  margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background: #f7f8fa;
+  color: #222;
+}
+
+.funky-heading, .funky-product-name {
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 0 2.5rem;
+  height: 280px;
+}
+
+.navbar-left .logo {
+  font-size: 2.3rem;
+  font-weight: bold;
+  color: #2d6cdf;
+  letter-spacing: 2px;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 2.5rem;
+  height: 100%;
+}
+
+.navbar-right a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #222;
+  font-size: 1.25rem;
+  font-weight: 600;
+  height: 100%;
+  padding: 0 0.5rem;
+  transition: color 0.2s;
+}
+
+.navbar-right a::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 8px;
+  height: 4px;
+  background: #e53935;
+  border-radius: 8px;
+  transform: scaleX(0);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  transform-origin: left;
+}
+
+.navbar-right a:hover {
+  color: #e53935;
+}
+
+.navbar-right a:hover::after {
+  transform: scaleX(1);
+}
+
+.home-content {
+  max-width: 900px;
+  margin: 3rem auto 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.home-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2d6cdf;
+}
+
+.home-content p {
+  font-size: 1.2rem;
+  color: #444;
+}
+
+/* Modern card animation and effects */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-card {
+  animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+.animated-card:hover {
+  transform: scale(1.045) translateY(-4px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 2px 16px 0 rgba(45,108,223,0.10);
+  z-index: 2;
+}
