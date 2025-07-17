@@ -9,6 +9,9 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
+import { auth, db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const images = [
   "/images/maksim-larin-NOpsC3nWTzY-unsplash.jpg",
@@ -16,8 +19,50 @@ const images = [
   "/images/reebok.jpg"
 ];
 
+const getLocalCart = () => {
+  const cart = localStorage.getItem("cart");
+  return cart ? JSON.parse(cart) : [];
+};
+const setLocalCart = (cart) => {
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
+
 const Home = () => {
   const [current, setCurrent] = useState(0);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    return () => unsub();
+  }, []);
+
+  const handleAddToCart = async (product) => {
+    // Default: first available size, quantity 1
+    const cartItem = {
+      productId: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      size: product.sizes[0],
+      quantity: 1,
+    };
+    let cart = user ? (await getDoc(doc(db, "users", user.uid))).data()?.cart || [] : getLocalCart();
+    // If already in cart (same productId and size), increase quantity
+    const idx = cart.findIndex(
+      (item) => item.productId === cartItem.productId && item.size === cartItem.size
+    );
+    if (idx > -1) {
+      cart[idx].quantity += 1;
+    } else {
+      cart.push(cartItem);
+    }
+    if (user) {
+      await setDoc(doc(db, "users", user.uid), { cart }, { merge: true });
+    } else {
+      setLocalCart(cart);
+    }
+    alert("Added to cart!");
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -175,6 +220,7 @@ const Home = () => {
                       mx: "auto",
                       '&:hover': { background: '#000' }
                     }}
+                    onClick={() => handleAddToCart(product)}
                   >
                     Add to Cart
                   </Button>
