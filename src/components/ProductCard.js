@@ -2,11 +2,19 @@ import React from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product, onAddToCart }) => {
+  const navigate = useNavigate();
+  const handleCardClick = (e) => {
+    // Prevent navigation if Add to cart button is clicked
+    if (e.target.closest('.add-to-cart-btn')) return;
+    navigate(`/product/${product.id}`);
+  };
   return (
     <Box
       className="uiverse-card"
+      onClick={handleCardClick}
       sx={{
         position: "relative",
         display: "flex",
@@ -19,6 +27,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         boxShadow: "0 2px 16px 0 rgba(31,38,135,0.06)",
         border: "2px solid transparent",
         transition: "border-color 0.2s, opacity 0.2s",
+        cursor: "pointer",
         '&:hover': {
           borderColor: '#e53935',
           opacity: 0.92,
@@ -86,6 +95,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         </Typography>
         <Button
           onClick={onAddToCart}
+          className="add-to-cart-btn"
           variant="contained"
           sx={{
             background: "#e53935",

@@ -43,7 +43,7 @@ const Navbar = () => {
         top: 0,
         zIndex: 1200,
         background: "rgba(255, 255, 255, 0.25)",
-        boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
+        boxShadow: "0 8px 32px 0 rgba(0,0,0,0.18)",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
         borderRadius: "0 0 24px 24px",
@@ -56,12 +56,11 @@ const Navbar = () => {
       <Toolbar sx={{ width: "100%", maxWidth: 1400, mx: "auto", minHeight: "0 !important", px: 0 }}>
         {/* Logo */}
         <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
-          <Typography
-            variant="h4"
-            sx={{ fontFamily: 'Vermin Verile, Bangers, cursive', color: "#2d6cdf", fontWeight: 700, letterSpacing: 2, fontSize: { xs: "2rem", md: "2.7rem" } }}
-          >
-            Reboot
-          </Typography>
+          <img
+            src="/logomain.png"
+            alt="Reboot Logo"
+            style={{ height: 160, width: 'auto', display: 'block' }}
+          />
         </Box>
         {/* Nav Links */}
         <Box sx={{ flex: 2, display: "flex", justifyContent: "center", gap: 5 }} className="navbar-center">
@@ -130,7 +129,7 @@ const Navbar = () => {
             <Button
               href="/login"
               sx={{
-                background: "#2d6cdf",
+                background: "#111",
                 color: "#fff",
                 borderRadius: 999,
                 fontWeight: 700,
@@ -139,7 +138,7 @@ const Navbar = () => {
                 py: 1.2,
                 boxShadow: "0 2px 8px 0 rgba(45,108,223,0.10)",
                 textTransform: "none",
-                '&:hover': { background: '#174ea6' },
+                '&:hover': { background: '#e53935' },
               }}
             >
               Login
