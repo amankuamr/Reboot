@@ -10,8 +10,9 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import { auth, db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import Footer from "../components/Footer";
 
 const images = [
   "/images/maksim-larin-NOpsC3nWTzY-unsplash.jpg",
@@ -30,13 +31,26 @@ const setLocalCart = (cart) => {
 const Home = () => {
   const [current, setCurrent] = useState(0);
   const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    fetchProducts();
     return () => unsub();
+    // eslint-disable-next-line
   }, []);
 
+  const fetchProducts = async () => {
+    const snap = await getDocs(collection(db, "products"));
+    setProducts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
+
   const handleAddToCart = async (product) => {
+    if (!user) {
+      alert("Please log in to add products to your cart.");
+      window.location.href = "/login";
+      return;
+    }
     // Default: first available size, quantity 1
     const cartItem = {
       productId: product.id,
@@ -46,7 +60,7 @@ const Home = () => {
       size: product.sizes[0],
       quantity: 1,
     };
-    let cart = user ? (await getDoc(doc(db, "users", user.uid))).data()?.cart || [] : getLocalCart();
+    let cart = (await getDoc(doc(db, "users", user.uid))).data()?.cart || [];
     // If already in cart (same productId and size), increase quantity
     const idx = cart.findIndex(
       (item) => item.productId === cartItem.productId && item.size === cartItem.size
@@ -56,11 +70,7 @@ const Home = () => {
     } else {
       cart.push(cartItem);
     }
-    if (user) {
-      await setDoc(doc(db, "users", user.uid), { cart }, { merge: true });
-    } else {
-      setLocalCart(cart);
-    }
+    await setDoc(doc(db, "users", user.uid), { cart }, { merge: true });
     alert("Added to cart!");
   };
 
@@ -175,7 +185,7 @@ const Home = () => {
                   <Typography variant="h6" className="funky-product-name" sx={{ fontWeight: 700, color: "#222", mb: 0.5 }}>{product.name}</Typography>
                   <Typography variant="body2" sx={{ color: "#444", mb: 0.5 }}>{product.category}</Typography>
                   <Typography variant="body2" sx={{ color: "#666", mb: 1 }}>
-                    Sizes: {product.sizes.join(", ")}
+                    Sizes: {product.sizes && product.sizes.join(", ")}
                   </Typography>
                   <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#111", mb: 1 }}>₹{product.price}</Typography>
                 </Box>
@@ -230,45 +240,9 @@ const Home = () => {
           ))}
         </Grid>
       </Box>
+    <Footer />
     </div>
   );
 };
-
-// Sample products array
-
-const products = [
-  {
-    id: "nike-air-max",
-    name: "Nike Air Max",
-    price: 5000,
-    category: "Running",
-    image: "/images/nike.jpg",
-        sizes: [6, 7, 8, 9, 10]
-  },
-  {
-    id: "reebok-classic",
-    name: "Reebok Classic",
-    price: 4200,
-    category: "Casual",
-    image: "/images/reebok.jpg",
-        sizes: [7, 8, 9, 10, 11]
-  },
-  {
-    id: "maksim-larin",
-    name: "Maksim Larin",
-    price: 3900,
-    category: "Sneakers",
-    image: "/images/maksim-larin-NOpsC3nWTzY-unsplash.jpg",
-        sizes: [6, 8, 9, 10]
-  },
-  {
-    id: "nike-zoom",
-    name: "Nike Zoom",
-    price: 5400,
-    category: "Sports",
-    image: "/images/nike.jpg",
-        sizes: [7, 8, 9, 10, 12]
-  }
-];
 
 export default Home;

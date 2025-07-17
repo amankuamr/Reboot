@@ -19,7 +19,7 @@ body {
   background: #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   padding: 0 2.5rem;
-  height: 280px;
+  height: 96px;
 }
 
 .navbar-left .logo {
@@ -48,13 +48,26 @@ body {
   transition: color 0.2s;
 }
 
-.navbar-right a::after {
+.navbar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #222;
+  font-size: 1.25rem;
+  font-weight: 600;
+  height: 100%;
+  padding: 0 0.5rem;
+  transition: color 0.2s;
+}
+
+.navbar-link::after {
   content: '';
   display: block;
   position: absolute;
   left: 16%;
   right: 16%;
-  bottom: 8px;
+  bottom: 28px;
   height: 4px;
   background: #e53935;
   border-radius: 8px;
@@ -63,11 +76,11 @@ body {
   transform-origin: left;
 }
 
-.navbar-right a:hover {
+.navbar-link:hover {
   color: #e53935;
 }
 
-.navbar-right a:hover::after {
+.navbar-link:hover::after {
   transform: scaleX(1);
 }
 
