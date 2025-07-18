@@ -37,7 +37,7 @@ const Featured = () => {
         ) : (
           <Grid container spacing={4} alignItems="stretch">
             {products.map(product => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
+              <Grid item xs={6} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
                 <ProductCard product={product} onAddToCart={() => {}} />
               </Grid>
             ))}

@@ -135,7 +135,17 @@ const Home = () => {
           border: "1px solid rgba(255,255,255,0.18)",
         }}
       >
-        <Box sx={{ position: "relative", height: { xs: 220, sm: 340, md: 400 }, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+        <Box sx={{
+          position: "relative",
+          height: { xs: 320, sm: 340, md: 400 },
+          width: "100%",
+          display: { xs: "grid", sm: "flex" },
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          gridTemplateColumns: { xs: "1fr 1fr", sm: undefined },
+          gridTemplateRows: { xs: "1fr 1fr", sm: undefined },
+        }}>
           {/* 4 static images with hover zoom and overlay text */}
           {[
             { src: "/images/1 (2).jpg", label: "Running" },
@@ -146,19 +156,22 @@ const Home = () => {
             <Box
               key={item.label}
               sx={{
-                width: "25%",
-                height: { xs: 220, sm: 340, md: 400 },
+                width: { xs: "100%", sm: "25%" },
+                height: { xs: 160, sm: 340, md: 400 },
                 position: "relative",
                 overflow: "hidden",
                 cursor: "pointer",
                 transition: "z-index 0.2s",
-                '&:hover .hero-img': {
-                  transform: 'scale(1.08)',
-                  filter: 'brightness(0.6) blur(2px)'
-                },
-                '&:hover .hero-label': {
-                  opacity: 1
-                }
+                // Only apply hover effect for sm and up
+                ...(typeof window !== 'undefined' && window.innerWidth >= 600 ? {
+                  '&:hover .hero-img': {
+                    transform: 'scale(1.08)',
+                    filter: 'brightness(0.6) blur(2px)'
+                  },
+                  '&:hover .hero-label': {
+                    opacity: 1
+                  }
+                } : {}),
               }}
             >
               <Box
@@ -170,24 +183,25 @@ const Home = () => {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  transition: "transform 0.5s cubic-bezier(.4,0,.2,1), filter 0.5s cubic-bezier(.4,0,.2,1)",
+                  transition: { xs: 'none', sm: "transform 0.5s cubic-bezier(.4,0,.2,1), filter 0.5s cubic-bezier(.4,0,.2,1)" },
                   zIndex: 1,
                 }}
               />
+              {/* Show overlay label only on desktop */}
               <Box
                 className="hero-label"
                 sx={{
+                  display: { xs: 'none', sm: 'flex' },
                   position: "absolute",
                   top: 0,
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#fff",
                   fontWeight: 700,
-                  fontSize: { xs: "1.4rem", md: "2rem" },
+                  fontSize: { sm: "1.4rem", md: "2rem" },
                   textShadow: "0 2px 8px rgba(0,0,0,0.4)",
                   letterSpacing: 2,
                   zIndex: 2,
@@ -196,6 +210,33 @@ const Home = () => {
                   pointerEvents: 'none',
                   textAlign: 'center',
                   background: 'rgba(0,0,0,0.0)'
+                }}
+              >
+                {item.label}
+              </Box>
+              {/* Show label as a tag on image for mobile */}
+              <Box
+                sx={{
+                  display: { xs: 'flex', sm: 'none' },
+                  position: 'absolute',
+                  top: 8,
+                  left: 8,
+                  background: '#e53935',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: 2,
+                  zIndex: 3,
+                  boxShadow: '0 2px 8px 0 rgba(229,57,53,0.10)',
+                  letterSpacing: 1,
+                  textTransform: 'uppercase',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  minWidth: 60,
+                  textAlign: 'center',
                 }}
               >
                 {item.label}
@@ -212,7 +253,7 @@ const Home = () => {
         <Grid container spacing={4} alignItems="stretch" justifyContent="center">
           {loading
             ? Array.from({ length: 8 }).map((_, idx) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item xs={6} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
                   <Box sx={{ width: 224 }}>
                     <Skeleton variant="rectangular" width={224} height={128} sx={{ borderRadius: 2, mb: 2 }} />
                     <Skeleton variant="text" width="80%" height={32} sx={{ mb: 1 }} />
@@ -222,7 +263,7 @@ const Home = () => {
                 </Grid>
               ))
             : products.slice(0, 8).map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item xs={6} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
                   <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
                 </Grid>
               ))}
@@ -287,7 +328,7 @@ const Home = () => {
             {(() => {
               if (loading) {
                 return Array.from({ length: 8 }).map((_, idx) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                  <Grid item xs={6} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
                     <Box sx={{ width: 224 }}>
                       <Skeleton variant="rectangular" width={224} height={128} sx={{ borderRadius: 2, mb: 2 }} />
                       <Skeleton variant="text" width="80%" height={32} sx={{ mb: 1 }} />
@@ -307,7 +348,7 @@ const Home = () => {
                 return <Typography sx={{ color: '#888', ml: 2 }}>No products found for {preference}.</Typography>;
               }
               return filtered.map(product => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} style={{ display: 'flex', justifyContent: 'center' }}>
+                <Grid item xs={6} sm={6} md={4} lg={3} key={product.id} style={{ display: 'flex', justifyContent: 'center' }}>
                   <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
                 </Grid>
               ));

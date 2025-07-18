@@ -48,7 +48,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         flexDirection: "column",
         gap: 1.5,
         p: 2,
-        width: 224,
+        width: { xs: '100%', sm: 224 },
         background: "linear-gradient(120deg, rgba(229,57,53,0.08) 0%, #fff 100%)",
         borderRadius: 3,
         boxShadow: "0 2px 16px 0 rgba(31,38,135,0.06)",
