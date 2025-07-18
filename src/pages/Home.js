@@ -286,13 +286,12 @@ const Home = () => {
         <Box
           sx={{
             display: { xs: 'flex', sm: 'none' },
-            flexDirection: 'column',
-            overflowY: 'auto',
-            maxHeight: 4 * 224 + 3 * 24, // 4 cards + 3 gaps (assuming 24px gap)
+            flexDirection: 'row',
+            overflowX: 'auto',
             gap: 3,
             width: '100%',
             justifyContent: 'flex-start',
-            alignItems: 'center',
+            alignItems: 'stretch',
             pb: 1,
           }}
         >
@@ -316,7 +315,7 @@ const Home = () => {
                   (product.brand && product.brand.toLowerCase().includes(q))
                 );
               }).map((product) => (
-                <Box key={product.id} sx={{ width: 224, display: 'flex', justifyContent: 'center' }}>
+                <Box key={product.id} sx={{ minWidth: 224, display: 'flex', justifyContent: 'center' }}>
                   <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
                 </Box>
               ))}
@@ -578,13 +577,12 @@ const Home = () => {
             <Box
               sx={{
                 display: { xs: 'flex', sm: 'none' },
-                flexDirection: 'column',
-                overflowY: 'auto',
-                maxHeight: 4 * 224 + 3 * 24, // 4 cards + 3 gaps (assuming 24px gap)
+                flexDirection: 'row',
+                overflowX: 'auto',
                 gap: 3,
                 width: '100%',
                 justifyContent: 'flex-start',
-                alignItems: 'center',
+                alignItems: 'stretch',
                 pb: 1,
               }}
             >
@@ -611,7 +609,7 @@ const Home = () => {
                   return <Typography sx={{ color: '#888', ml: 2 }}>No products found for {preference}.</Typography>;
                 }
                 return filtered.map(product => (
-                  <Box key={product.id} sx={{ width: 224, display: 'flex', justifyContent: 'center' }}>
+                  <Box key={product.id} sx={{ minWidth: 224, display: 'flex', justifyContent: 'center' }}>
                     <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
                   </Box>
                 ));
@@ -645,7 +643,8 @@ const Home = () => {
               const filtered = products.filter(product =>
                 (preference === 'Men' ? product.gender === 'Men' :
                 preference === 'Women' ? product.gender === 'Women' :
-                preference === 'Kids' ? product.gender === 'Kids' : false)
+                preference === 'Kids' ? product.gender === 'Kids' :
+                preference === 'Both' ? (typeof product.gender === 'string' && product.gender.trim().toLowerCase() === 'both') : false)
                 && (
                   !searchQuery ||
                   (product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase())) ||

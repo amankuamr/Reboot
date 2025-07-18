@@ -25,6 +25,7 @@ import "../App.css";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
+  { label: "Wishlist", href: "/wishlist" },
   { label: "Cart", href: "/cart" },
 ];
 
@@ -136,7 +137,7 @@ const Navbar = ({ hidden }) => {
                   key={link.href}
                   href={link.href}
                   className="navbar-link"
-                  style={{ fontSize: "1.25rem", fontWeight: 600, color: "#222", textDecoration: "none", position: "relative", padding: "0 0.5rem" }}
+                  style={{ fontSize: "1.25rem", fontWeight: 600, color: "#222", textDecoration: "none", position: "relative", padding: "0 0.5rem", display: 'flex', alignItems: 'center', gap: 0.5 }}
                 >
                   {link.label}
                 </a>
