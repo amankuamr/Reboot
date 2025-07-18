@@ -9,21 +9,24 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProductDetail from "./pages/ProductDetail";
 import Featured from "./pages/Featured";
 import "./App.css";
+import { SearchFilterProvider } from "./context/SearchFilterContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/featured" element={<Featured />} />
-      </Routes>
-    </Router>
+    <SearchFilterProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/featured" element={<Featured />} />
+        </Routes>
+      </Router>
+    </SearchFilterProvider>
   );
 }
 

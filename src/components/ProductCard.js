@@ -9,6 +9,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 const ProductCard = ({ product, onAddToCart }) => {
+  if (product && product.gender && typeof product.gender === 'string' && product.gender.trim().toLowerCase() === 'both') {
+    console.log('ProductCard rendering for BOTH:', product);
+  }
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -50,9 +53,9 @@ const ProductCard = ({ product, onAddToCart }) => {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        gap: { xs: 0.5, sm: 1.5 },
-        p: { xs: 1, sm: 2 },
-        width: { xs: 140, sm: 224 },
+        gap: 1.5,
+        p: 2,
+        width: 224,
         background: "linear-gradient(120deg, rgba(229,57,53,0.08) 0%, #fff 100%)",
         borderRadius: 3,
         boxShadow: "0 2px 16px 0 rgba(31,38,135,0.06)",
@@ -95,9 +98,9 @@ const ProductCard = ({ product, onAddToCart }) => {
           cursor: "pointer",
           position: "relative",
           zIndex: 5,
-          minHeight: { xs: 32, sm: 40 },
+          minHeight: 40,
             width: "100%",
-          height: { xs: 72, sm: 128 },
+          height: 128,
           background: "#fff",
           borderRadius: 2,
           display: "flex",

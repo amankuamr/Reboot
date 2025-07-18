@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchFilter } from "../context/SearchFilterContext";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -30,7 +31,7 @@ const navLinks = [
 const Navbar = ({ hidden }) => {
   const [user, setUser] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const { searchQuery, setSearchQuery } = useSearchFilter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -155,8 +156,8 @@ const Navbar = ({ hidden }) => {
                 </IconButton>
                 <InputBase
                   placeholder="Search..."
-                  value={searchValue}
-                  onChange={e => setSearchValue(e.target.value)}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                   sx={{
                     width: searchOpen ? 180 : 0,
                     opacity: searchOpen ? 1 : 0,

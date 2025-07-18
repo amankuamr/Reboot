@@ -23,7 +23,7 @@ const CLOUDINARY_UPLOAD_PRESET = "Reeboot";
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ name: "", price: "", category: "", sizes: "", image: null });
+  const [form, setForm] = useState({ name: "", price: "", category: "", sizes: "", image: null, gender: "", type: "" });
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -91,7 +91,8 @@ const AdminDashboard = () => {
         await updateDoc(doc(db, "products", editId), {
           name: form.name,
           price: Number(form.price),
-          category: form.type || '',
+          category: form.category || '',
+          type: form.type || '',
           color: form.color || [],
           sizes: sizesArr,
           image: imgUrl,
@@ -102,7 +103,8 @@ const AdminDashboard = () => {
         await addDoc(collection(db, "products"), {
           name: form.name,
           price: Number(form.price),
-          category: form.type || '',
+          category: form.category || '',
+          type: form.type || '',
           color: form.color || [],
           sizes: sizesArr,
           image: imgUrl,
@@ -177,24 +179,24 @@ const AdminDashboard = () => {
                     <MenuItem value="Purple">Purple</MenuItem>
                   </TextField>
                   <TextField label="Sizes (comma separated)" name="sizes" value={form.sizes} onChange={handleInputChange} required sx={{ flex: 1, minWidth: 180 }} />
-                  {/* Product Type Dropdown */}
+                  {/* Category Dropdown (types only) */}
                   <TextField
                     select
-                    label="Type"
-                    name="type"
-                    value={form.type || ''}
+                    label="Category"
+                    name="category"
+                    value={form.category || ''}
                     onChange={handleInputChange}
                     required
                     SelectProps={{ native: true }}
                     sx={{ flex: 1, minWidth: 140 }}
                   >
-                    <option value="">Select Type</option>
+                    <option value="">Select Category</option>
                     <option value="Casual">Casual</option>
                     <option value="Sports">Sports</option>
                     <option value="Running">Running</option>
                     <option value="Outdoor">Outdoor</option>
                   </TextField>
-                  {/* Gender Dropdown */}
+                  {/* Gender Dropdown (Men/Women/Kids) */}
                   <TextField
                     select
                     label="Gender"
@@ -209,6 +211,7 @@ const AdminDashboard = () => {
                     <option value="Men">Men</option>
                     <option value="Women">Women</option>
                     <option value="Kids">Kids</option>
+                    <option value="Both">Both</option>
                   </TextField>
                 </Box>
                 <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
@@ -232,14 +235,15 @@ const AdminDashboard = () => {
                     <img src={prod.image} alt={prod.name} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginRight: 16 }} />
                     <Box sx={{ flexGrow: 1 }}>
                       <Typography sx={{ fontWeight: 700, color: "#222" }}>{prod.name}</Typography>
-                      <Typography sx={{ color: "#444" }}>₹{prod.price} | {prod.category} | {prod.gender} | {Array.isArray(prod.color) ? prod.color.map((c, i) => <span key={c} style={{color: c, fontWeight: 700, marginRight: 4}}>●</span>) : <span style={{color: prod.color, fontWeight: 700}}>●</span>} {Array.isArray(prod.color) ? prod.color.join(", ") : prod.color} | Sizes: {prod.sizes && prod.sizes.join(", ")}</Typography>
+                      <Typography sx={{ color: "#444" }}>₹{prod.price} | Category: {prod.category} | Type: {prod.type} | {prod.gender} | {Array.isArray(prod.color) ? prod.color.map((c, i) => <span key={c} style={{color: c, fontWeight: 700, marginRight: 4}}>●</span>) : <span style={{color: prod.color, fontWeight: 700}}>●</span>} {Array.isArray(prod.color) ? prod.color.join(", ") : prod.color} | Sizes: {prod.sizes && prod.sizes.join(", ")}</Typography>
                     </Box>
                     <IconButton onClick={() => {
                       setEditId(prod.id);
                       setForm({
                         name: prod.name || "",
                         price: prod.price || "",
-                        type: prod.category || "",
+                        category: prod.category || "",
+                        type: prod.type || "",
                         color: prod.color || [],
                         sizes: prod.sizes ? prod.sizes.join(",") : "",
                         gender: prod.gender || "",
