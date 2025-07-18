@@ -250,24 +250,34 @@ const Home = () => {
         <Typography variant="h4" className="funky-heading" sx={{ mb: 3, color: "#222", fontWeight: 600, textAlign: 'left', width: '100%', fontFamily: 'inherit', fontSize: '2rem', letterSpacing: 0 }}>
           Featured Products
         </Typography>
-        <Grid container spacing={4} alignItems="stretch" justifyContent="center">
+        <Box
+          sx={{
+            display: { xs: 'grid', sm: 'flex' },
+            gridTemplateColumns: { xs: '1fr 1fr', sm: undefined },
+            gridAutoRows: { xs: 'auto', sm: undefined },
+            gap: { xs: 2, sm: 0 },
+            maxHeight: { xs: 'calc(2 * 224px + 32px)', sm: 'none' },
+            overflowY: { xs: 'auto', sm: 'visible' },
+            width: '100%',
+          }}
+        >
           {loading
             ? Array.from({ length: 8 }).map((_, idx) => (
-                <Grid item xs={6} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                <Box key={idx} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <Box sx={{ width: 224 }}>
                     <Skeleton variant="rectangular" width={224} height={128} sx={{ borderRadius: 2, mb: 2 }} />
                     <Skeleton variant="text" width="80%" height={32} sx={{ mb: 1 }} />
                     <Skeleton variant="text" width="60%" height={24} sx={{ mb: 1 }} />
                     <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 2 }} />
                   </Box>
-                </Grid>
+                </Box>
               ))
-            : products.slice(0, 8).map((product) => (
-                <Grid item xs={6} sm={6} md={4} lg={3} key={product.id} style={{ display: "flex", justifyContent: "center" }}>
+            : products.map((product) => (
+                <Box key={product.id} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
-                </Grid>
+                </Box>
               ))}
-        </Grid>
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Button
             variant="contained"
@@ -324,18 +334,28 @@ const Home = () => {
               </Button>
             ))}
           </Box>
-          <Grid container spacing={4} alignItems="stretch" justifyContent="center">
+          <Box
+            sx={{
+              display: { xs: 'grid', sm: 'flex' },
+              gridTemplateColumns: { xs: '1fr 1fr', sm: undefined },
+              gridAutoRows: { xs: 'auto', sm: undefined },
+              gap: { xs: 2, sm: 0 },
+              maxHeight: { xs: 'calc(2 * 224px + 32px)', sm: 'none' },
+              overflowY: { xs: 'auto', sm: 'visible' },
+              width: '100%',
+            }}
+          >
             {(() => {
               if (loading) {
                 return Array.from({ length: 8 }).map((_, idx) => (
-                  <Grid item xs={6} sm={6} md={4} lg={3} key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                  <Box key={idx} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <Box sx={{ width: 224 }}>
                       <Skeleton variant="rectangular" width={224} height={128} sx={{ borderRadius: 2, mb: 2 }} />
                       <Skeleton variant="text" width="80%" height={32} sx={{ mb: 1 }} />
                       <Skeleton variant="text" width="60%" height={24} sx={{ mb: 1 }} />
                       <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 2 }} />
                     </Box>
-                  </Grid>
+                  </Box>
                 ));
               }
               const filtered = products.filter(product =>
@@ -348,12 +368,12 @@ const Home = () => {
                 return <Typography sx={{ color: '#888', ml: 2 }}>No products found for {preference}.</Typography>;
               }
               return filtered.map(product => (
-                <Grid item xs={6} sm={6} md={4} lg={3} key={product.id} style={{ display: 'flex', justifyContent: 'center' }}>
+                <Box key={product.id} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
-                </Grid>
+                </Box>
               ));
             })()}
-          </Grid>
+          </Box>
         </Box>
       </Box>
     {/* Color/Size Selection Modal */}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,16 +15,20 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,7 +67,17 @@ const SignIn = () => {
             sx={{ mb: 2 }}
           />
           {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mb: 2, borderRadius: 999, fontWeight: 700, background: "#2d6cdf" }}>Sign In</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mb: 2, borderRadius: 999, fontWeight: 700, background: "#2d6cdf" }}
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </Button>
         </form>
         <Button
           variant="outlined"
