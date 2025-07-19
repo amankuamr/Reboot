@@ -147,8 +147,29 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Fixed under construction banner
+  const underConstructionBanner = (
+    <div style={{
+      position: 'fixed',
+      bottom: 24,
+      right: 24,
+      zIndex: 9999,
+      background: '#e53935',
+      color: '#fff',
+      padding: '12px 32px',
+      borderTopLeftRadius: '12px',
+      borderTopRightRadius: '12px',
+      fontWeight: 700,
+      fontSize: '1.2rem',
+      boxShadow: '0 2px 8px 0 rgba(229,57,53,0.15)'
+    }}>
+      under construction
+    </div>
+  );
+
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #e0e7ff 0%, #f7f8fa 100%)" }}>
+      {underConstructionBanner}
       <Navbar hidden={navbarHidden} />
       {/* Hero Section with Glassmorphism Carousel - only show if no search query, with smooth fade animation */}
       <Fade in={!searchQuery} timeout={500} unmountOnExit>
